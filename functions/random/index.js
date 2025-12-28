@@ -7,12 +7,12 @@ let allowRandom = false;
 export async function onRequest(context) {
     // Contents of context object
     const {
-      request, // same as existing Worker API
-      env, // same as existing Worker API
-      params, // if filename includes [id] or [[path]]
-      waitUntil, // same as ctx.waitUntil in existing Worker API
-      next, // used for middleware or to fetch assets
-      data, // arbitrary space for passing data between middlewares
+        request, // same as existing Worker API
+        env, // same as existing Worker API
+        params, // if filename includes [id] or [[path]]
+        waitUntil, // same as ctx.waitUntil in existing Worker API
+        next, // used for middleware or to fetch assets
+        data, // arbitrary space for passing data between middlewares
     } = context;
     const requestUrl = new URL(request.url);
 
@@ -73,26 +73,18 @@ export async function onRequest(context) {
 
         const randomType = requestUrl.searchParams.get('type');
         const resType = requestUrl.searchParams.get('form');
-        
+
         // if param 'type' is set to 'url', return the full URL
         if (randomType == 'url') {
             randomUrl = requestUrl.origin + randomPath;
         }
 
-        // if param 'type' is set to 'img', return the image
+        // if param 'type' is set to 'img', redirect to the image (302)
         if (randomType == 'img') {
-            // Return an image response
             randomUrl = requestUrl.origin + randomPath;
-            let contentType = 'image/jpeg';
-            return new Response(await fetch(randomUrl).then(res => {
-                contentType = res.headers.get('content-type');
-                return res.blob();
-            }), {
-                headers: contentType ? { 'Content-Type': contentType } : { 'Content-Type': 'image/jpeg' },
-                status: 200
-            });
+            return Response.redirect(randomUrl, 302);
         }
-        
+
         if (resType == 'text') {
             return new Response(randomUrl, { status: 200 });
         } else {
@@ -127,6 +119,6 @@ async function getRandomFileList(context, url, dir) {
     }), {
         expirationTtl: 24 * 60 * 60
     });
-    
+
     return allRecords;
 }
