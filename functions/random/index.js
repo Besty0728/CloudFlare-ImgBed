@@ -82,7 +82,13 @@ export async function onRequest(context) {
         // if param 'type' is set to 'img', redirect to the image (302)
         if (randomType == 'img') {
             randomUrl = requestUrl.origin + randomPath;
-            return Response.redirect(randomUrl, 302);
+            return new Response(null, {
+                status: 302,
+                headers: {
+                    'Location': randomUrl,
+                    'Cache-Control': 'public, max-age=3'
+                }
+            });
         }
 
         if (resType == 'text') {
