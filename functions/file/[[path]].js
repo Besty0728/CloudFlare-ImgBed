@@ -61,7 +61,6 @@ export async function onRequest(context) {  // Contents of context object
         return await returnBlockImg(url);
     }
     // [CUSTOM-FEATURE-END]
-
     const fileName = imgRecord.metadata?.FileName || fileId;
     const encodedFileName = encodeURIComponent(fileName);
     const fileType = imgRecord.metadata?.FileType || null;
@@ -455,8 +454,8 @@ async function handleDiscordChunkedFile(context, imgRecord, encodedFileName, fil
                             break;
                         }
 
-                        // 获取分片数据
-                        const chunkData = await fetchDiscordChunkWithRetry(chunk, proxyUrl, 3);
+                        // 获取分片数据（每次通过 API 获取新的附件 URL）
+                        const chunkData = await fetchDiscordChunkWithRetry(botToken, metadata.DiscordChannelId, chunk, proxyUrl, 3);
                         if (!chunkData) {
                             throw new Error(`Failed to fetch Discord chunk ${chunk.index} after retries`);
                         }
@@ -505,11 +504,17 @@ async function handleDiscordChunkedFile(context, imgRecord, encodedFileName, fil
     }
 }
 
-// 带重试机制的Discord分片获取函数
-async function fetchDiscordChunkWithRetry(chunk, proxyUrl, maxRetries = 3) {
+// 带重试机制的Discord分片获取函数（每次通过 API 获取新的附件 URL）
+async function fetchDiscordChunkWithRetry(botToken, channelId, chunk, proxyUrl, maxRetries = 3) {
     for (let attempt = 0; attempt < maxRetries; attempt++) {
         try {
-            let fileUrl = chunk.url;
+            // 通过 Discord API 获取新的附件 URL（因为 URL 会在约24小时后过期）
+            const discordAPI = new DiscordAPI(botToken);
+            let fileUrl = await discordAPI.getFileURL(channelId, chunk.messageId);
+
+            if (!fileUrl) {
+                throw new Error('Failed to get attachment URL from Discord API');
+            }
 
             // 如果配置了代理 URL，替换 Discord CDN 域名
             if (proxyUrl) {
@@ -691,11 +696,9 @@ async function handleDiscordFile(context, metadata, encodedFileName, fileType) {
     const { env, request, url, Referer } = context;
 
     try {
-        // 优先使用存储的附件 URL
-        let fileUrl = metadata.DiscordAttachmentUrl;
-
-        // 如果没有存储 URL，尝试通过 API 获取
-        if (!fileUrl && metadata.DiscordMessageId && metadata.DiscordChannelId && metadata.DiscordBotToken) {
+        // 每次读取都通过 API 获取新的附件 URL（因为 Discord 附件 URL 会在约24小时后过期）
+        let fileUrl = null;
+        if (metadata.DiscordMessageId && metadata.DiscordChannelId && metadata.DiscordBotToken) {
             const discordAPI = new DiscordAPI(metadata.DiscordBotToken);
             fileUrl = await discordAPI.getFileURL(metadata.DiscordChannelId, metadata.DiscordMessageId);
         }
