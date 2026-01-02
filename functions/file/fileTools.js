@@ -5,7 +5,7 @@ export function isDomainAllowed(context) {
     const { Referer, securityConfig, url } = context;
 
     const allowedDomains = securityConfig.access.allowedDomains;
-    
+
     if (Referer) {
         try {
             const refererUrl = new URL(Referer);
@@ -17,7 +17,7 @@ export function isDomainAllowed(context) {
                     let domainPattern = new RegExp(`(^|\\.)${domain.replace('.', '\\.')}$`); // Escape dot in domain
                     return domainPattern.test(refererUrl.hostname);
                 });
-                
+
                 if (!isAllowed) {
                     return false;
                 }
@@ -36,11 +36,11 @@ export function setCommonHeaders(headers, encodedFileName, fileType, Referer, ur
     headers.set('Access-Control-Allow-Origin', '*');
     headers.set('Accept-Ranges', 'bytes');
     headers.set('Vary', 'Range');
-    
+
     if (fileType) {
         headers.set('Content-Type', fileType);
     }
-    
+
     // 根据Referer设置CDN缓存策略
     if (Referer && Referer.includes(url.origin)) {
         headers.set('Cache-Control', 'private, max-age=86400'); // 本地缓存 1天
@@ -59,7 +59,7 @@ export function setRangeHeaders(headers, rangeStart, rangeEnd, totalSize) {
 // 处理HEAD请求的公共函数
 export function handleHeadRequest(headers, etag = null) {
     const responseHeaders = new Headers();
-    
+
     // 复制关键头部
     responseHeaders.set('Content-Length', headers.get('Content-Length') || '0');
     responseHeaders.set('Content-Type', headers.get('Content-Type') || 'application/octet-stream');
@@ -67,11 +67,11 @@ export function handleHeadRequest(headers, etag = null) {
     responseHeaders.set('Access-Control-Allow-Origin', headers.get('Access-Control-Allow-Origin') || '*');
     responseHeaders.set('Accept-Ranges', headers.get('Accept-Ranges') || 'bytes');
     responseHeaders.set('Cache-Control', headers.get('Cache-Control') || 'public, max-age=2592000');
-    
+
     if (etag) {
         responseHeaders.set('ETag', etag);
     }
-    
+
     return new Response(null, {
         status: 200,
         headers: responseHeaders,
@@ -123,6 +123,10 @@ export async function returnWithCheck(context, imgRecord) {
     if (record.metadata === null) {
     } else {
         //if the record is not null, redirect to the image
+        // Public 文件无条件放行（独立于白名单模式）
+        if (record.metadata.ListType == "Public") {
+            return response;
+        }
         if (record.metadata.ListType == "White") {
             return response;
         } else if (record.metadata.ListType == "Block") {
@@ -139,7 +143,7 @@ export async function returnWithCheck(context, imgRecord) {
             return response;
         }
     }
-    
+
     // other cases
     return response;
 }
