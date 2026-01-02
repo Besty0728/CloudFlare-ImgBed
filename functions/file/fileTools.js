@@ -123,10 +123,12 @@ export async function returnWithCheck(context, imgRecord) {
     if (record.metadata === null) {
     } else {
         //if the record is not null, redirect to the image
+        // [CUSTOM-FEATURE-START] Public ListType
         // Public 文件无条件放行（独立于白名单模式）
         if (record.metadata.ListType == "Public") {
             return response;
         }
+        // [CUSTOM-FEATURE-END]
         if (record.metadata.ListType == "White") {
             return response;
         } else if (record.metadata.ListType == "Block") {

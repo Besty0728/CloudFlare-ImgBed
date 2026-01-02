@@ -39,7 +39,9 @@ export async function onRequest(context) {  // Contents of context object
     const Referer = request.headers.get('Referer')
     context.Referer = Referer;
 
-    // 从数据库中获取图片记录（提前读取，用于判断是否为 Public 文件）
+    // [CUSTOM-FEATURE-START] 提前读取数据库以支持 Public Access
+    // 原上游逻辑先检查防盗链，后读取数据库。此处调换顺序。
+    // 从数据库中获取图片记录
     const db = getDatabase(env);
     const imgRecord = await db.getWithMetadata(fileId);
     if (!imgRecord) {
@@ -58,6 +60,7 @@ export async function onRequest(context) {  // Contents of context object
     if (!isPublicFile && !isDomainAllowed(context)) {
         return await returnBlockImg(url);
     }
+    // [CUSTOM-FEATURE-END]
 
     const fileName = imgRecord.metadata?.FileName || fileId;
     const encodedFileName = encodeURIComponent(fileName);
