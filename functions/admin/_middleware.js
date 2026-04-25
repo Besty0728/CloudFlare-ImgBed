@@ -1,6 +1,6 @@
 import { fetchSecurityConfig } from "../utils/sysConfig";
 import { checkDatabaseConfig } from "../utils/middleware";
-import { validateApiToken } from "../utils/tokenValidator";
+import { validateApiToken } from "../utils/auth/tokenValidator";
 import { getDatabase } from "../utils/databaseAdapter.js";
 
 let securityConfig = {}
