@@ -19,6 +19,8 @@ jobs:
       # Step 1: run a standard checkout action
       - name: Checkout target repo
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       # Step 2: verify SYNC_TOKEN has workflow scope (required to update workflow files)
       - name: Check SYNC_TOKEN
