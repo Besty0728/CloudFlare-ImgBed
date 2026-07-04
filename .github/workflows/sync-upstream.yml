@@ -3,7 +3,6 @@ name: Upstream Sync
 permissions:
   contents: write
   actions: write
-  workflows: write
 
 on:
   schedule:
@@ -21,7 +20,17 @@ jobs:
       - name: Checkout target repo
         uses: actions/checkout@v6
 
-      # Step 2: run the sync action
+      # Step 2: verify SYNC_TOKEN is set (required to update workflow files)
+      - name: Check SYNC_TOKEN
+        env:
+          SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
+        run: |
+          if [ -z "$SYNC_TOKEN" ]; then
+            echo "::error::SYNC_TOKEN is not set or is empty. To sync workflow file changes from upstream, create a Personal Access Token (classic) with 'repo' and 'workflow' scopes and add it as the SYNC_TOKEN repository secret."
+            exit 1
+          fi
+
+      # Step 3: run the sync action
       - name: Sync upstream changes
         id: sync
         uses: aormsby/Fork-Sync-With-Upstream-action@v3.4.3
@@ -29,7 +38,7 @@ jobs:
           upstream_sync_repo: MarSeventh/CloudFlare-ImgBed
           upstream_sync_branch: main
           target_sync_branch: main
-          target_repo_token: ${{ secrets.SYNC_TOKEN || secrets.GITHUB_TOKEN }} # Set SYNC_TOKEN with workflow permissions to auto sync workflows
+          target_repo_token: ${{ secrets.SYNC_TOKEN }} # Must be a classic PAT with 'repo' + 'workflow' scopes
 
           # Set test_mode true to run tests instead of the true action!!
           test_mode: false
