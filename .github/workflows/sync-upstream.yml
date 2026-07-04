@@ -20,13 +20,21 @@ jobs:
       - name: Checkout target repo
         uses: actions/checkout@v6
 
-      # Step 2: verify SYNC_TOKEN is set (required to update workflow files)
+      # Step 2: verify SYNC_TOKEN has workflow scope (required to update workflow files)
       - name: Check SYNC_TOKEN
         env:
           SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
         run: |
           if [ -z "$SYNC_TOKEN" ]; then
             echo "::error::SYNC_TOKEN is not set or is empty. To sync workflow file changes from upstream, create a Personal Access Token (classic) with 'repo' and 'workflow' scopes and add it as the SYNC_TOKEN repository secret."
+            exit 1
+          fi
+
+          SCOPES=$(curl -sI -H "Authorization: Bearer ${SYNC_TOKEN}" https://api.github.com/ | grep -i '^x-oauth-scopes:' | sed 's/X-OAuth-Scopes: //i' | tr ',' '\n' | tr -d ' ')
+          echo "SYNC_TOKEN scopes:"
+          echo "$SCOPES"
+          if ! echo "$SCOPES" | grep -qx 'workflow'; then
+            echo "::error::SYNC_TOKEN does not have the required 'workflow' scope. Please create a new Personal Access Token (classic) with at least 'repo' and 'workflow' scopes, then update the SYNC_TOKEN repository secret. Fine-grained PATs cannot be used for this."
             exit 1
           fi
 
