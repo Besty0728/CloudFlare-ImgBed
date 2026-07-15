@@ -49,6 +49,7 @@ jobs:
           upstream_sync_branch: main
           target_sync_branch: main
           target_repo_token: ${{ secrets.SYNC_TOKEN }} # Must be a classic PAT with 'repo' + 'workflow' scopes
+          upstream_pull_args: -X theirs # Auto-resolve merge conflicts by preferring upstream changes
 
           # Set test_mode true to run tests instead of the true action!!
           test_mode: false
@@ -62,6 +63,6 @@ jobs:
       - name: Sync check
         if: failure()
         run: |
-          echo "[Error] 由于上游仓库的 workflow 文件变更，导致 GitHub 自动暂停了本次自动更新，你需要手动 Sync Fork 一次。"
-          echo "[Error] Due to a change in the workflow file of the upstream repository, GitHub has automatically suspended the scheduled automatic update. You need to manually sync your fork."
+          echo "[Error] 自动同步失败。请检查上游同步步骤日志（例如是否存在未能自动处理的冲突或 Token 权限问题），然后手动同步一次。"
+          echo "[Error] Upstream auto-sync failed. Please check the sync step logs (for unresolved conflicts or token scope issues), then perform one manual sync."
           exit 1
