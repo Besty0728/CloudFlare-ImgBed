@@ -136,7 +136,7 @@
 
 # 1. Introduction
 
-Free file hosting solution with full lifecycle features including **upload**, **management**, **read**, and **delete**, supporting **authentication**, **directories**, **image moderation**, **random images**, and other features (see [Feature Docs](https://cfbed.sanyue.de/en/guide/features.html) for details).
+CloudFlare-ImgBed is an open-source file hosting solution compatible with both Docker and Serverless dual-stack deployments, featuring support for multiple backend storage channels. It not only provides fundamental features covering the entire file lifecycle—such as **uploading**, **managing**, **reading**, and **deleting**—but also offers advanced capabilities including **authentication**, **directory organization**, **content moderation**, and **random images**. Supported by a comprehensive RESTful API and WebDAV integration, it is perfectly suited for self-hosted image hosting, static site asset management, and lightweight file distribution scenarios. You can see [Feature Docs](https://cfbed.sanyue.de/en/guide/features.html) for details.
 
 ![CloudFlare](readme/海报.png)
 
@@ -171,13 +171,22 @@ Provides detailed deployment documentation, feature docs, development plans, upd
 
 </details>
 
-# 4. Tips
+# 4. Ecosystem
+
+Open source ecosystem development cannot be separated from everyone's support. Everyone is welcome to visit the [CloudFlare ImgBed Ecosystem Building](https://cfbed.sanyue.de/en/about/ecosystem.html) page for more information. Our ecosystem building section includes but is not limited to the following content:
+
+- **Excellent Plugin Extensions**: Browser plugins; extensions for well-known platforms like Typecho, WordPress, Obsidian; OpenList drivers, etc.
+- **Rich Peripheral Applications**: Desktop clients, bot support tools, etc.
+- **AI Intelligent Agent Applications**: Official skills for the project, etc.
+- **High-Quality Tutorial Content**: High-quality videos and articles from various self-media creators.
+
+You can not only find the plugins, applications, and tutorials you like here, but you can also share your own works here. For sharing guidelines, please refer to the instructions in the [Ecosystem Building Call for Contributions](https://github.com/MarSeventh/CloudFlare-ImgBed/discussions/606). We look forward to everyone actively participating in our ecosystem building!
+
+# 5. Tips
 
 - Frontend is open source, see [MarSeventh/Sanyue-ImgHub](https://github.com/MarSeventh/Sanyue-ImgHub).
 
 - Desktop software is open source, see [MarSeventh/satellite](https://github.com/MarSeventh/satellite).
-
-- **Ecosystem**: We welcome community participation in the ecosystem construction. Feel free to submit PRs or Issues, and high-quality content can be found on the [official ecosystem page](https://cfbed.sanyue.de/en/about/ecosystem.html).
 
 - **Sponsor**: Maintaining the project is not easy. If you like it, please support the author. Your support is the motivation to keep going~
 
@@ -191,7 +200,7 @@ Provides detailed deployment documentation, feature docs, development plans, upd
 
   [![Contributors](https://contrib.rocks/image?repo=Marseventh/Cloudflare-ImgBed)](https://github.com/MarSeventh/CloudFlare-ImgBed/graphs/contributors)
 
-# 5. Star History
+# 6. Star History
 
 **If you like the project, please give a free star✨✨✨, thank you very much!**
 
@@ -203,7 +212,7 @@ Provides detailed deployment documentation, feature docs, development plans, upd
  </picture>
 </a>
 
-# 6. Special Sponsors
+# 7. Special Sponsors
 
 - **[CloudFlare](https://www.cloudflare.com/) & [EdgeOne](https://edgeone.ai/?from=github)**: Provides CDN acceleration, and security protection
 
@@ -212,3 +221,9 @@ Provides detailed deployment documentation, feature docs, development plans, upd
 - **[Svyun](https://www.svyun.com/recommend/AELZ0UeMz8K11Zg7pEXC)**: Provides cloud computing resources support
 
 - **[Linux DO](https://linux.do/)**: New Ideal Community
+
+# 8. License
+
+This project is licensed under the [MIT License](https://github.com/MarSeventh/CloudFlare-ImgBed/blob/main/LICENSE). You can use, modify, and distribute the project freely as long as the original **copyright notice** is retained in **all copies or substantial portions** of the software.
+
+This project is a secondary development based on the [Telegraph-Image](https://github.com/cf-pages/Telegraph-Image) project.
