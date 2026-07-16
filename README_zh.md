@@ -146,7 +146,7 @@
 
 # 1. Introduction
 
-CloudFlare-ImgBed是一个兼容Docker和Serverless双栈部署，支持多种后端存储渠道的开源文件托管解决方案，不仅具备**上传**、**管理**、**读取**、**删除**等覆盖文件全生命周期的基础功能，还提供**身份认证**、**目录组织**、**内容审核**、**随机图**等能力以及完整的RESTful API与WebDAV支持，适合自建图床、静态站资源管理和轻量文件分发场景。详见[功能文档](https://cfbed.sanyue.de/guide/features.html)。
+CloudFlare-ImgBed 是一个兼容 Docker 和 Serverless 双栈部署，支持多种后端存储渠道的开源文件托管解决方案，不仅具备**上传**、**管理**、**读取**、**删除**等覆盖文件全生命周期的基础功能，还提供**身份认证**、**目录组织**、**内容审核**、**随机图**等能力以及完整的 RESTful API 与 WebDAV 支持，适合自建图床、静态站资源管理和轻量文件分发场景。详见[功能文档](https://cfbed.sanyue.de/guide/features.html)。
 
 ![CloudFlare](readme/海报.png)
 
@@ -164,20 +164,39 @@ CloudFlare-ImgBed是一个兼容Docker和Serverless双栈部署，支持多种�
 
 <details>
     <summary>其他页面效果展示</summary>
-    
-![image-20250313204101984](readme/login.png)
 
-![image-20250313204138886](readme/uploading.png)
-
-![image-20250313204308225](readme/dashboard.png)
-
-![image-20250314152355339](readme/customer-config.png)
-
-![status-page](readme/status-page.png)
-
-![public-gallery](readme/public-gallery.png)
-
-
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <strong>登录页面</strong><br>
+      <img src="readme/login.png" alt="登录页面" width="100%">
+    </td>
+    <td align="center" width="50%">
+      <strong>上传进度</strong><br>
+      <img src="readme/uploading.png" alt="上传进度" width="100%">
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <strong>文件管理</strong><br>
+      <img src="readme/dashboard.png" alt="文件管理" width="100%">
+    </td>
+    <td align="center" width="50%">
+      <strong>用户管理</strong><br>
+      <img src="readme/customer-config.png" alt="用户管理" width="100%">
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <strong>状态页面</strong><br>
+      <img src="readme/status-page.png" alt="状态页面" width="100%">
+    </td>
+    <td align="center" width="50%">
+      <strong>公开画廊</strong><br>
+      <img src="readme/public-gallery.png" alt="公开画廊" width="100%">
+    </td>
+  </tr>
+</table>
 
 </details>
 
@@ -185,9 +204,9 @@ CloudFlare-ImgBed是一个兼容Docker和Serverless双栈部署，支持多种�
 
 开源生态的发展离不开所有人的支持，欢迎大家前往[CloudFlare ImgBed 生态建设](https://cfbed.sanyue.de/about/ecosystem.html)页面了解更多信息，我们的生态建设版块包括但不限于以下内容：
 
-- **优秀的插件扩展**：浏览器插件；Typecho、WordPress、Obsidian等知名平台扩展插件；OpenList驱动等
-- **丰富的周边应用**：桌面客户端、bot辅助工具等
-- **AI 智能体应用**：项目官方skill等
+- **优秀的插件扩展**：浏览器插件；Typecho、WordPress、Obsidian 等知名平台扩展插件；OpenList 驱动等
+- **丰富的周边应用**：桌面客户端、bot 辅助工具等
+- **AI 智能体应用**：项目官方 skill 等
 - **优质的教程内容**：各大自媒体创作者的优质视频、文字教程
 
 您不仅能在这里找到您心仪的插件、应用、教程，还可以在这里分享您自己的作品，分享请参考[生态建设征集令](https://github.com/MarSeventh/CloudFlare-ImgBed/discussions/606)的说明，期待大家积极参与到我们的生态建设中来！
@@ -213,7 +232,7 @@ CloudFlare-ImgBed是一个兼容Docker和Serverless双栈部署，支持多种�
 
 # 6. Star History
 
-**如果觉得项目不错希望您能给个免费的star✨✨✨，非常感谢！**
+**如果觉得项目不错希望您能给个免费的 star✨✨✨，非常感谢！**
 
 <a href="https://www.star-history.com/?repos=MarSeventh%2FCloudFlare-ImgBed%2CMarSeventh%2FSanyue-ImgHub&type=date&legend=top-left">
  <picture>
@@ -225,7 +244,7 @@ CloudFlare-ImgBed是一个兼容Docker和Serverless双栈部署，支持多种�
 
 # 7. Special Sponsors
 
-- **[CloudFlare](https://www.cloudflare.com) & [EdgeOne](https://edgeone.ai/?from=github)**：提供CDN加速和安全保护服务
+- **[CloudFlare](https://www.cloudflare.com) & [EdgeOne](https://edgeone.ai/?from=github)**：提供 CDN 加速和安全保护服务
 
   <a href="https://www.cloudflare.com"><img src="readme/cloudflare-logo.png" alt="Cloudflare Logo" height="25"></a> <a href="https://edgeone.ai/?from=github"><img src="readme/edgeone-logo.png" alt="Tencent Logo" height="25"></a>
 
