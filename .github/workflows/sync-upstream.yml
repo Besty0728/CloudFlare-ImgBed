@@ -32,6 +32,9 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
+          # GITHUB_TOKEN 无法推送包含 workflow 文件变更的提交；
+          # 若配置了带 workflow 权限的 PAT（SYNC_TOKEN），优先使用它。
+          token: ${{ secrets.SYNC_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Check breaking update policy
         id: breaking_guard
@@ -45,13 +48,42 @@ jobs:
       - name: Sync upstream changes
         id: sync
         if: steps.breaking_guard.outputs.blocked != 'true'
-        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
-        with:
-          upstream_sync_repo: MarSeventh/CloudFlare-ImgBed
-          upstream_sync_branch: main
-          target_sync_branch: main
-          target_repo_token: ${{ secrets.GITHUB_TOKEN }}
-          test_mode: false
+        env:
+          UPSTREAM_REPO: MarSeventh/CloudFlare-ImgBed
+          UPSTREAM_BRANCH: main
+        run: |
+          set -e
+          git config user.name "GH Action - Upstream Sync"
+          git config user.email "action@github.com"
+          # 启用 .gitattributes 里的 merge=ours 驱动：README、赞赏码图片、
+          # 本工作流等 Fork 自有文件在合并时始终保留本仓库版本。
+          git config merge.ours.driver true
+
+          git remote remove upstream 2>/dev/null || true
+          git remote add upstream "https://github.com/${UPSTREAM_REPO}.git"
+          git fetch --no-tags upstream "${UPSTREAM_BRANCH}"
+
+          if git merge-base --is-ancestor "upstream/${UPSTREAM_BRANCH}" HEAD; then
+            echo "No new commits from upstream. Already up to date."
+            exit 0
+          fi
+
+          echo "New commits since last sync:"
+          git log --pretty=oneline "HEAD..upstream/${UPSTREAM_BRANCH}"
+
+          echo "Merging upstream changes..."
+          # 冲突时优先采用上游版本（-X theirs），保留本仓库未冲突的自定义内容；
+          # .gitattributes 标记为 merge=ours 的文件除外（始终保留本仓库版本）。
+          # Prefer upstream changes on conflicts (-X theirs) while keeping
+          # non-conflicting local customizations; files marked merge=ours in
+          # .gitattributes always keep this repository's version.
+          if ! git merge --no-edit -X theirs "upstream/${UPSTREAM_BRANCH}"; then
+            echo "::error::Merge with upstream failed. Please resolve manually."
+            git merge --abort || true
+            exit 1
+          fi
+
+          git push origin "HEAD:main"
 
       - name: Complete breaking update notices
         if: steps.sync.outcome == 'success'
@@ -71,14 +103,18 @@ jobs:
           {
             echo "## ⚠️ 上游同步未完成 / Upstream synchronization did not complete"
             echo
-            echo "上游同步步骤未能完成。若上游近期修改了 workflow 文件，GitHub 可能会暂停包含 workflow 变更的自动同步；也可能是当前 Fork 的 Actions 权限或同步权限发生了变化。"
+            echo "合并冲突已配置为自动解决（Fork 自有文件保留本仓库版本，其余冲突优先采用上游版本），因此失败通常发生在 **推送** 阶段：GitHub 不允许 \`GITHUB_TOKEN\` 推送包含 \`.github/workflows\` 变更的提交。"
             echo
-            echo "The upstream synchronization step could not be completed. If the upstream workflow files changed recently, GitHub may pause automatic synchronization that includes workflow changes. The issue may also be related to Actions or synchronization permissions in this fork."
+            echo "Merge conflicts are auto-resolved (fork-owned files are kept, other conflicts favor upstream), so a failure usually happens at the **push** stage: GitHub does not allow \`GITHUB_TOKEN\` to push commits that touch \`.github/workflows\`."
             echo
-            echo "建议先在 GitHub 页面手动执行一次 **Sync fork**，确认 Actions 具有读写权限后，再重新运行本工作流。"
+            echo "**解决办法 / How to fix**"
             echo
-            echo "Please manually use **Sync fork** on GitHub, confirm that Actions has read and write permissions, and then rerun this workflow."
+            echo "1. 创建一个具备 \`repo\` 和 \`workflow\` 权限的 Personal Access Token（classic），将其保存为本仓库的 Actions Secret，名称为 \`SYNC_TOKEN\`，然后重新运行本工作流。"
+            echo "2. 或者在 GitHub 页面手动执行一次 **Sync fork**，再重新运行本工作流。"
+            echo
+            echo "1. Create a classic Personal Access Token with \`repo\` and \`workflow\` scopes, save it as an Actions secret named \`SYNC_TOKEN\` in this repository, then rerun this workflow."
+            echo "2. Or manually use **Sync fork** on GitHub, then rerun this workflow."
           } >> "$GITHUB_STEP_SUMMARY"
-          echo "[Error] 上游同步未能完成。若上游近期修改了 workflow 文件，请先在 GitHub 页面手动执行一次 Sync Fork，然后重新运行本工作流。"
-          echo "[Error] The upstream sync could not be completed. If the upstream workflow files changed recently, manually run Sync Fork on GitHub and then rerun this workflow."
+          echo "[Error] 上游同步失败。若上游近期修改了 workflow 文件，请配置带 workflow 权限的 SYNC_TOKEN 后重试，或先在 GitHub 页面手动 Sync Fork。"
+          echo "[Error] Upstream sync failed. If upstream workflow files changed recently, configure a SYNC_TOKEN with workflow scope and retry, or manually run Sync Fork on GitHub first."
           exit 1

@@ -1,0 +1,19 @@
+# Fork 自有内容：与上游合并时始终保留本仓库版本。
+# 依赖 merge=ours 驱动（sync-upstream 工作流与本地仓库均需执行一次
+# `git config merge.ours.driver true` 后生效）。
+# Keep fork-owned files on merge with upstream (requires the "ours" merge
+# driver: `git config merge.ours.driver true`).
+
+# 本 Fork 自己的 README（上游 docs 提交改动频繁，是定时同步冲突的主要来源）
+README.md merge=ours
+README_zh.md merge=ours
+
+# 本 Fork 自己的赞赏码图片（README 中引用，二进制文件无法自动合并）
+readme/alipay-reward.png merge=ours
+readme/weixin-reward.png merge=ours
+
+# 本 Fork 定制过的同步工作流，避免被上游版本覆盖
+.github/workflows/sync-upstream.yml merge=ours
+
+# 本文件自身
+.gitattributes merge=ours
